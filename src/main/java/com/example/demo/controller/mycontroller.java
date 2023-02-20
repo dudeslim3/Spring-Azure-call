@@ -11,7 +11,7 @@ public class mycontroller {
 	public String getapi()
 	{
 		System.out.println("hello1");
-		return "hello1";
+		return "hello1 goodmorning";
 	}
 
 }
