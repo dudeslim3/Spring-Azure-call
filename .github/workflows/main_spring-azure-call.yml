@@ -26,4 +26,4 @@ jobs:
           app-name: "Spring-Azure-call"
           slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7462F88167D04D2092FE2D54C3AEED39 }}
-          package:  '*.jar'
+          package:  'Spring-Azure-call.jar'
