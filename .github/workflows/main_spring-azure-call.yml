@@ -1,53 +1,29 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy JAR app to Azure Web App - Spring-Azure-call
-
+name: Build and deploy JAR file on Azure Microsoft
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
 jobs:
-  build:
+  build-and-deploy:
     runs-on: windows-latest
-
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Java version
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Java environment
         uses: actions/setup-java@v1
         with:
           java-version: '17'
-
       - name: Build with Maven
-        run: mvn clean install
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
+        run: mvn package
+      - name: Upload artifact to Azure Blob Storage
+        uses: azure/CLI@v1
         with:
-          name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: java-app
-
+          inlineScript: |
+            az storage blob upload-batch --destination "<container-name>" --source "target/*.jar" --pattern "*.jar" --account-name "<storage-account-name>" --account-key "<storage-account-key>"
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'Spring-Azure-call'
-          slot-name: 'Production'
+          app-name: "Spring-Azure-call"
+          slot-name: "Production"
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7462F88167D04D2092FE2D54C3AEED39 }}
-          package: '*.jar'
+          package:  '*.jar'
